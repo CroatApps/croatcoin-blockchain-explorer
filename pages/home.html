@@ -22,9 +22,9 @@
 						
 			
 						
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Current Base Reward (for last mined block)."><i class="fa fa-certificate"></i> Reward: <span id="currentReward"></span> kQWC</li>
+						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Current Base Reward (for last mined block)."><i class="fa fa-certificate"></i> Reward: <span id="currentReward"></span><i> QWC</i></li>
 						
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Total Qwertycoin supply in circulation in Millions"><i class="fa fa-money"></i> Supply: <span id="totalCoins"></span> mQWC</li>
+						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Total Qwertycoin supply in circulation in Billions"><i class="fa fa-money"></i> Supply: <span id="totalCoins"></span><i>bn QWC</i></li>
 						
 						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="bottom" data-original-title="Percent of already emitted coins related to Initial supply before Tail emission."><i class="fa fa-university" aria-hidden="true"></i> Emission: <span id="emissionPercent"></span> %</li>
 						
@@ -33,7 +33,7 @@
 				<div class="col-sm-6 col-md-6">
 					<ul class="list-group">
 					
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Difficulty for next block. Ratio at which at the current hashing speed blocks will be mined with 4 minutes interval."><i class="fa fa-unlock-alt"></i> Next Difficulty: <span id="networkDifficulty"></span></li>
+						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Difficulty for next block. Ratio at which at the current hashing speed blocks will be mined with 2 minutes interval."><i class="fa fa-unlock-alt"></i> Next Difficulty: <span id="networkDifficulty"></span></li>
 				
 						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Average difficulty by last 30 blocks."><i class="fa fa-lock"></i> Average Difficulty: <span id="avgDifficulty"></span></li>
 					
@@ -269,9 +269,9 @@ $.ajax({
 			cache: 'false',
 			success: function(data){
 			block = data.result.block;
-				updateText('totalCoins', getReadableCoins(block.alreadyGeneratedCoins/1000000,4,true));
+				updateText('totalCoins', getReadableCoins(block.alreadyGeneratedCoins/1000000000,8,true));
 				updateText('emissionPercent', (block.alreadyGeneratedCoins / 18446744073700000000 * 100).toFixed(4));
-				updateText('currentReward', getReadableCoins(block.baseReward/1000,4,true));
+				updateText('currentReward', getReadableCoins(block.baseReward,1,true));
 			}
 		});
     }
@@ -527,6 +527,7 @@ function getPoolTransactions(){
 	cache: 'false',
 	success: function(newdata) {
 		if(typeof newdata.result !== "undefined") {
+			var countMemTx = 0;
 			var data = newdata.result.mempool;
 			var totalAmount = 0;
 			var totalFee = 0;
@@ -538,7 +539,12 @@ function getPoolTransactions(){
 				  txsRows.removeChild(txsRows.firstChild);
 				}
 			  }
-			for (var i = 0; i < data.length; i ++){
+			  if(data.length >= 10) {
+			  	countMemTx = 10;
+			  } else {
+			  	countMemTx = data.length;
+			  }
+			for (var i = 0; i < countMemTx; i ++){
 				var tx = data[i];
 					
 				var row = document.createElement('tr');
