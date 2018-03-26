@@ -33,7 +33,7 @@
 				<div class="col-sm-6 col-md-6">
 					<ul class="list-group">
 					
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Difficulty for next block. Ratio at which at the current hashing speed blocks will be mined with 4 minutes interval."><i class="fa fa-unlock-alt"></i> Difficulty: <span id="networkDifficulty"></span></li>
+						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Difficulty for next block. Ratio at which at the current hashing speed blocks will be mined with 4 minutes interval."><i class="fa fa-unlock-alt"></i> Next Difficulty: <span id="networkDifficulty"></span></li>
 				
 						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Average difficulty by last 30 blocks."><i class="fa fa-lock"></i> Average Difficulty: <span id="avgDifficulty"></span></li>
 					
@@ -197,8 +197,8 @@ var block,
 	Txses = [],
 	Sizes = [],
 	Timestamps = [],
-	diffChart;
-
+	diffChart,
+	refresh = true;
 
 currentPage = {
         destroy: function(){
@@ -219,11 +219,11 @@ currentPage = {
             updateText('networkHeight', lastStats.height.toString());
             updateText('networkTransactions', lastStats.tx_count.toString());
             updateText('networkHashrate', getReadableHashRateString(lastStats.difficulty / blockTargetInterval));
-            updateText('networkDifficulty', getReadableDifficultyString(lastStats.difficulty, 0).toString());
+            updateText('networkDifficulty', getReadableDifficultyString(lastStats.difficulty, 2).toString());
 			$("time.timeago").timeago();
 			getPoolTransactions();
 			var currHeight = $('#blocks_rows').children().first().data('height');
-			if((currHeight + 31) > lastStats.last_known_block_index){
+			if(refresh){
 				$.when(
 					renderInitialBlocks()
 				).then(function() {
@@ -269,13 +269,13 @@ $.ajax({
 			cache: 'false',
 			success: function(data){
 			block = data.result.block;
-				updateText('totalCoins', getReadableCoins(block.alreadyGeneratedCoins/1000000,5,true));
+				updateText('totalCoins', getReadableCoins(block.alreadyGeneratedCoins/1000000,4,true));
 				updateText('emissionPercent', (block.alreadyGeneratedCoins / 18446744073700000000 * 100).toFixed(4));
 				updateText('currentReward', getReadableCoins(block.baseReward/1000,4,true));
 			}
 		});
     }
-});				
+});
 }
 
 var xhrGetBlocks;
@@ -307,6 +307,7 @@ $('#loadMoreBlocks').click(function(){
 });
 
 $('#prev-page').click(function(e){
+	refresh = false;
     if (xhrGetBlocks) xhrGetBlocks.abort();
 	var currHeight = $('#blocks_rows').children().first().data('height');
 	var openHeight = (currHeight - 31 < 0) ? 0 : currHeight - 31;
@@ -346,6 +347,7 @@ $('#prev-page').click(function(e){
 });
 
 $('#next-page').click(function(e){
+	refresh = false;
     if (xhrGetBlocks) xhrGetBlocks.abort();
 	var currHeight = $('#blocks_rows').children().first().data('height');
 	var openHeight = (currHeight + 31 > lastStats.last_known_block_index) ? (lastStats.last_known_block_index) : currHeight + 31;
@@ -378,6 +380,7 @@ $('#next-page').click(function(e){
 	
 	if((currHeight + 61) > lastStats.last_known_block_index){
 		$('#next-page').addClass('disabled');
+		refresh = true;
 	}
 	
 		$('#prev-page').removeClass('disabled');
@@ -503,7 +506,7 @@ $('#goto-height').keyup(function(e){
 		var avgDiff = Math.round(sum / Difficulties.length);
 		var avgHashRate = avgDiff / blockTargetInterval;
 		
-		updateText('avgDifficulty', getReadableDifficultyString(avgDiff, 0).toString());
+		updateText('avgDifficulty', getReadableDifficultyString(avgDiff, 2).toString());
 		updateText('avgHashrate', getReadableHashRateString(avgDiff / blockTargetInterval));
         updateText('blockSolveTime', getReadableTime(lastStats.difficulty / avgHashRate));
 
@@ -523,41 +526,43 @@ function getPoolTransactions(){
 	dataType: 'json',
 	cache: 'false',
 	success: function(newdata) {
-		var data = newdata.result.mempool;
-		var totalAmount = 0;
-		var totalFee = 0;
-		var totalSize = 0;
-		var txcount = 0;
-		var txsRows = document.getElementById('mem_pool_rows');
-		  if (txsRows) {
-			while (txsRows.firstChild) {
-			  txsRows.removeChild(txsRows.firstChild);
-			}
-		  }
-		for (var i = 0; i < data.length; i ++){
-			var tx = data[i];
+		if(typeof newdata.result !== "undefined") {
+			var data = newdata.result.mempool;
+			var totalAmount = 0;
+			var totalFee = 0;
+			var totalSize = 0;
+			var txcount = 0;
+			var txsRows = document.getElementById('mem_pool_rows');
+			  if (txsRows) {
+				while (txsRows.firstChild) {
+				  txsRows.removeChild(txsRows.firstChild);
+				}
+			  }
+			for (var i = 0; i < data.length; i ++){
+				var tx = data[i];
+					
+				var row = document.createElement('tr');
+				var columns =
+					'<td>' + formatDate(tx.receiveTime) + ' (<span class="mtx-ago"></span>)' + '</td>' +
+					'<td>' + getReadableCoins(tx.amount_out, 4, true) + '</td>' +
+					'<td>' + getReadableCoins(tx.fee, 4, true) + '</td>' +
+					'<td>' + formatBytes(parseInt(tx.size)) + '</td>' +
+					'<td>' + formatPaymentLink(tx.hash) + '</td>';
+				row.innerHTML = columns;
+				$(txsRows).append(row);
+				$(row).find('.mtx-ago').timeago('update', new Date(tx.receiveTime * 1000).toISOString());
 				
-			var row = document.createElement('tr');
-			var columns =
-				'<td>' + formatDate(tx.receiveTime) + ' (<span class="mtx-ago"></span>)' + '</td>' +
-				'<td>' + getReadableCoins(tx.amount_out, 4, true) + '</td>' +
-				'<td>' + getReadableCoins(tx.fee, 4, true) + '</td>' +
-				'<td>' + formatBytes(parseInt(tx.size)) + '</td>' +
-				'<td>' + formatPaymentLink(tx.hash) + '</td>';
-			row.innerHTML = columns;
-			$(txsRows).append(row);
-			$(row).find('.mtx-ago').timeago('update', new Date(tx.receiveTime * 1000).toISOString());
-			
-			txcount = txcount + 1;
-			totalAmount = tx.amount_out + totalAmount;
-			totalFee = totalFee + tx.fee;
-			totalSize = totalSize + tx.size;
-			
+				txcount = txcount + 1;
+				totalAmount = tx.amount_out + totalAmount;
+				totalFee = totalFee + tx.fee;
+				totalSize = totalSize + tx.size;
+				
+			}
+			updateText('mempool_count', txcount);
+			updateText('mempool_amount', getReadableCoins(totalAmount,4));
+			updateText('mempool_fees', getReadableCoins(totalFee, 8));
+			updateText('mempool_sizes', formatBytes(parseInt(totalSize)));
 		}
-		updateText('mempool_count', txcount);
-		updateText('mempool_amount', getReadableCoins(totalAmount,4));
-		updateText('mempool_fees', getReadableCoins(totalFee, 8));
-		updateText('mempool_sizes', formatBytes(parseInt(totalSize)));
 	}
   });
 }
@@ -751,7 +756,7 @@ function displayDiffChart() {
 					title: function(tooltipItem, data) {
 						var height	= data.datasets[3].data[tooltipItem[0].index];
 						var time = new Date(data.labels[tooltipItem[0].index]).toLocaleString();
-						//return 'Блок №: ' + height + ' - ' + time + '';
+						//return 'Block: ' + height + ' - ' + time + '';
 						return time + '';
 					},/*
 					label: function(tooltipItem, data) { 
@@ -768,8 +773,8 @@ function displayDiffChart() {
 						var multistringText = [];
   
 						var str1 = diff_swatch + 'Складність: ' + diff + '';
-						var str2 = 'Розмір: ' + size + '';
-						var str3 = 'Транзакції: ' + txcount + '';
+						var str2 = 'Size: ' + size + '';
+						var str3 = 'Transactions: ' + txcount + '';
   
 						multistringText.push(str1);
 						multistringText.push(str2);
@@ -798,12 +803,18 @@ function refreshChart() {
 		txsnr   = [];
 		for (var i = 0; i < brows.length; i++) {
 			var row = $(brows[i]);
-			var label  = parseInt(row.find('td:first').text());
+			/*var label  = parseInt(row.find('td:first').text());
 			var diff   = parseInt(row.find('td.blk-diff').text());
 			var txses  = parseInt(row.find('td:last').text());
 			var size   = parseInt(row.find('td:nth-child(3)').text());
 			var time   = row.attr('data-dt');
-			
+			*/
+			var label = row.data("json").height;
+			var diff  = row.data("json").difficulty;
+			var txses = row.data("json").tx_count;
+			var size  = row.data("json").cumul_size;
+			var time  = row.attr('data-dt');
+
 				labels.push(label);
 				diffs.push(diff);
 				txsnr.push(txses);
