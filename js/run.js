@@ -1,36 +1,59 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
-	<link rel="shortcut icon" href="https://cdn.qwertycoin.org/images/icons/favicons/fav_explorer.png">
-    <link rel="icon" type="image/icon" href="https://cdn.qwertycoin.org/images/icons/favicons/fav_explorer.png" >
-    <title>Block Explorer - [QWC]</title>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
-    <link href="/css/themes/qwc/style.css" rel="stylesheet" id="theme_link">    
-    <link href="/js/fontawesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="//fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
-    
-</head>
-<body>
-<script>
-
-    function addCommas(nStr) {
-        nStr += '';
-        var x = nStr.split('.');
-        var x1 = x[0];
-        var x2 = x.length > 1 ? '.' + x[1] : '';
-        var rgx = /(\d+)(\d{3})/;
-        while (rgx.test(x1)) {
-            x1 = x1.replace(rgx, '$1' + ',' + '$2');
-        }
-        return x1 + x2;
-    }
 
 	var blockchainExplorer 	= "/?hash={id}#blockchain_block";
 	var transactionExplorer = "/?hash={id}#blockchain_transaction";
 	var paymentIdExplorer 	= "/?hash={id}#blockchain_payment_id";
+	
+	var style_cookie_name = "style";
+	var style_cookie_duration = 365;
+	var style_domain = window.location.hostname;
+	
+	$(function(){
+		$('.theme-switch[rel="/css/themes/white/style.css"]').hide();
+		set_style_from_cookie();
+		
+		$('.theme-switch').click(function() {
+			swapStyleSheet($(this).attr('rel'));
+			$('.theme-switch').show();
+			$(this).hide();
+			return false;
+		});
+		
+		function swapStyleSheet(sheet){
+			$('#theme_link').attr('href',sheet);
+			$('.theme-switch').show();
+			$('.theme-switch[rel="'+sheet+'"]').hide();
+			set_cookie(style_cookie_name, sheet, style_cookie_duration, style_domain);
+		}
+	
+		function set_style_from_cookie(){
+			var style = get_cookie(style_cookie_name);
+			if (style.length){
+				swapStyleSheet(style);
+			}
+		}
+		function set_cookie (cookie_name, cookie_value, lifespan_in_days, valid_domain){
+			var domain_string = valid_domain ?
+							   ("; domain=" + valid_domain) : '';
+				document.cookie = cookie_name +
+							   "=" + encodeURIComponent(cookie_value) +
+							   "; max-age=" + 60 * 60 *
+							   24 * lifespan_in_days +
+							   "; path=/" + domain_string;
+		}
+		function get_cookie (cookie_name){
+			var cookie_string = document.cookie;
+			if (cookie_string.length != 0){
+				var cookie_value = cookie_string.match(
+							  '(^|;)[\s]*' +
+							  cookie_name +
+							  '=([^;]*)' );
+				if(cookie_value != null && cookie_value.length>0) {
+					return decodeURIComponent (cookie_value[2]);
+				}
+			}
+			return '';
+		}
+	});
 	
     function getTransactionUrl(id) {
         return transactionExplorer.replace('{symbol}', symbol.toLowerCase()).replace('{id}', id);
@@ -70,7 +93,7 @@
 
     var currentPage;
     var lastStats;
-    var nodeStatus;
+
 
     function getReadableHashRateString(hashrate){
         var i = 0;
@@ -84,7 +107,7 @@
 	
 	function getReadableDifficultyString(difficulty, precision){
 		if (isNaN(parseFloat(difficulty)) || !isFinite(difficulty)) return 0;
-		if (typeof precision === 'undefined') precision = 2;
+		if (typeof precision === 'undefined') precision = 0;
 		var units = ['', 'k', 'M', 'G', 'T', 'P'],
             number = Math.floor(Math.log(difficulty) / Math.log(1000));
 		if (units[number] === undefined || units[number] === null) {
@@ -119,10 +142,10 @@
         var stats_update = document.getElementById('stats_updated');
         stats_update.style.transition = 'opacity 100ms ease-out';
         stats_update.style.opacity = 1;
-        /*setTimeout(function(){
+        setTimeout(function(){
             stats_update.style.transition = 'opacity 7000ms linear';
             stats_update.style.opacity = 0;
-        }, 500);*/
+        }, 500);
     }
 
     window.onhashchange = function(){
@@ -136,12 +159,10 @@
             dataType: 'json',
 			type: 'GET',
             cache: 'false'
-        }).done(function(data, success){
+        }).done(function(data){
             pulseLiveUpdate();
             lastStats = data;
-			nodeStatus = success;
             currentPage.update();
-			nodeInfo();
         }).always(function () {
 			setTimeout(function() {
 				fetchLiveStats();
@@ -153,26 +174,7 @@
         return float.toFixed(6).replace(/[0\.]+$/, '');
     }
 
-	function nodeInfo() {
-        if(nodeStatus) {
-			$('#node_connection').html('Online').addClass('text-success').removeClass('text-danger');
-			$('#node_height').html(parseInt(lastStats['height']));
-			$('#node_block').html(parseInt(lastStats['last_known_block_index']));
-			$('#node_diff').html(parseInt(lastStats['difficulty']));
-			$('#node_alt').html(parseInt(lastStats['alt_blocks_count']));
-			$('#node_rpc').html(parseInt(lastStats['rpc_connections_count']));
-			$('#node_inc').html(parseInt(lastStats['incoming_connections_count']));
-			$('#node_out').html(parseInt(lastStats['outgoing_connections_count']));
-			$('#node_white').html(parseInt(lastStats['white_peerlist_size']));
-			$('#node_grey').html(parseInt(lastStats['grey_peerlist_size']));
-			if (lastStats['version'] !== 'undefined'){
-				$('#node_ver').html(lastStats['version']);
-			}
-		} else {
-			$('#node_connection').html('Offline').addClass('text-danger').removeClass('text-success');
-		}
-    }
-	
+
     var xhrPageLoading;
     function routePage(loadedCallback) {
 
@@ -208,11 +210,7 @@
 
     $(function(){
         $.get(api + '/getinfo', function(data){
-            try {
-                lastStats = JSON.parse(data);
-			} catch(e) {
-                lastStats = data;
-            }
+            lastStats = JSON.parse(data);
             routePage(fetchLiveStats);
         });
     });
@@ -239,71 +237,36 @@
 			str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
 		return str;
 	}
-</script>
 
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Menu</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand " href="/"><strong>Qwertycoin</strong></a>
-			<div id="stats_updated"><i class="fa fa-bolt"></i></div>
-        </div>
+
+
+			jQuery(function($) { $(document).ready(function() {
+				$(window).scroll(function(){
+					if ($(this).scrollTop() > 500) {
+						$('.scrollup').fadeIn();
+					} else {
+						$('.scrollup').fadeOut();
+					}
+				}); 
 		
-        <div class="collapse navbar-collapse">
+				$('.scrollup').click(function(){
+					$("html, body").animate({ scrollTop: 0 }, 600);
+					return false;
+				});
+
+				$('.scrollup').css('opacity','0.3');
 		 
-            <ul class="nav navbar-nav navbar-left explorer_menu">
-
-			    <li><a class="hot_link" data-page="home.html" href="#">
-                    <i class="fa fa-cubes" aria-hidden="true"></i> Block Explorer
-                </a></li>
-				
-				<li><a class="hot_link" data-page="pools.html" href="#pools">
-                    <i class="fa fa-gavel" aria-hidden="true"></i> Pools
-                </a></li>
-				
-				<li><a class="hot_link" data-page="api.html" href="#api">
-                    <i class="fa fa-code" aria-hidden="true"></i> API
-                </a></li>	
-
-                <li style="display:none;"><a class="hot_link" data-page="blockchain_block.html" href="#blockchain_block"><i class="fa fa-cubes"></i> Block
-                </a></li>
-
-                <li style="display:none;"><a class="hot_link" data-page="blockchain_transaction.html" href="#blockchain_transaction"><i class="fa fa-cubes"></i> Transaction
-                </a></li>
-				
-				<li style="display:none;"><a class="hot_link" data-page="blockchain_payment_id.html" href="#blockchain_payment_id"><i class="fa fa-cubes"></i> Transactions by Payment ID
-                </a></li>
-
-                <li><a  style="display:none;" class="hot_link" data-page="support.html" href="#support">
-                    <i class="fa fa-comments"></i> Help
-                </a></li> 
-
-<!-- //-->
-            </ul>
-            
+				$('.scrollup').hover(function(){
+					$(this).stop().animate({opacity: 0.9}, 400);
+				 }, function(){
+					$(this).stop().animate({opacity: 0.3}, 400);
+				});  
 					
-			<div class="nav col-md-6 navbar-right explorer-search">
-				<div class="input-group">
-					<input class="form-control" placeholder="Search by block height / hash, transaction hash, payment id" id="txt_search">
-					<span class="input-group-btn"><button class="btn btn-default" type="button" id="btn_search">
-						<span><i class="fa fa-search"></i> Search</span>
-					</button></span>
-				</div>
-			</div>
-		  
-		  
-		  
-		</div>
-	  </div>
-</div>
-
+			});});
 	
-<script>
+
+
+
 $('#btn_search').click(function(e) {
 
 var text = document.getElementById('txt_search').value;
@@ -443,102 +406,3 @@ $('#txt_search').keyup(function(e){
         if(e.keyCode === 13)
             $('#btn_search').click();
 });
-</script>
-
-<div id="content">
-	<div class="container">
-
-		<div id="page"></div>
-
-		<p id="loading" class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i></p>
-
-	</div>
-</div>
-
-<footer>
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-4 col-md-4 col-sm-6">
-				<p>
-                    <small>
-                        &copy; 2018 <strong>Qwertycoin</strong>.org
-                    </small>
-                </p>
-                
-                <ul>
-                    <li><a href="https://qwertycoin.org/">Qwertycoin.org</a></li>
-                    <li><a href="https://qwertycoin.site/">Official Mining Pool</a></li>
-                    <li><a href="https://qwertycoin.org/downloads">Download Walletsoftware</a></li>
-                    <li><a href="https://paperwallet.qwertycoin.org/">Create a Paperwallet</a></li>
-                    <li><a href="https://nodes.qwertycoin.org/">Qwertycoin Remotenodes</a></li>
-                    <li><a href="https://blockchain.qwertycoin.org/">Blockchain archive</a></li>
-                </ul>
-			</div>
-			<div class="col-lg-4 col-md-4 col-sm-6">
-                <strong class="text-info">Node info</strong>
-
-                <ul class="text-info">
-                    <li>Status: <span id="node_connection" class="text-danger">Offline</span></li>
-                    <li>Version: <span id="node_ver">...</span></li>
-                    <li>Height: <span id="node_height">...</span></li>
-                    <li>Last block: <span id="node_block">...</span></li>
-                    <li>Difficulty: <span id="node_diff">...</span></li>
-                    <li>Alt. blocks: <span id="node_alt">...</span></li>
-                </ul>
-			</div>
-			<div class="col-lg-4 col-md-4 col-sm-6">
-			
-				<strong class="text-info">Node info</strong>
-				
-				<ul class="text-info">
-					<li>RPC connections: <span id="node_rpc">...</span></li>
-					<li>Incoming P2P connections: <span id="node_inc">...</span></li>
-					<li>Outgoing P2P connects: <span id="node_out">...</span></li>
-					<li>White peers: <span id="node_white">...</span></li>
-					<li>Grey peers: <span id="node_grey">...</span></li>
-				</ul>
-            <small>             
-                Powered by <a target="_blank" href="https://github.com/qwertycoin-org/qwertycoin-blockchain-explorer"><i class="fa fa-github"></i> Qwertycoin Blockchain Explorer</a><br />
-            </small>
-			
-			</div>
-		</div>
-    </div>
-</footer>
-<a href="#" class="scrollup"><i class="fa fa-chevron-circle-up"></i></a>
-	<script type="text/javascript">
-			jQuery(function($) { $(document).ready(function() {
-				$(window).scroll(function(){
-					if ($(this).scrollTop() > 500) {
-						$('.scrollup').fadeIn();
-					} else {
-						$('.scrollup').fadeOut();
-					}
-				}); 
-		
-				$('.scrollup').click(function(){
-					$("html, body").animate({ scrollTop: 0 }, 600);
-					return false;
-				});
-
-				$('.scrollup').css('opacity','0.3');
-		 
-				$('.scrollup').hover(function(){
-					$(this).stop().animate({opacity: 0.9}, 400);
-				 }, function(){
-					$(this).stop().animate({opacity: 0.3}, 400);
-				}); 
-					
-			});
-		});		
-	</script>	
-
-
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.4.0/jquery.timeago.min.js"></script>
-    <!--<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>-->
-    <script src="https://code.highcharts.com/highcharts.src.js"></script>
-    <script src="/js/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/js/moment.js"></script>
-    <script src="/config.js"></script>
-</body>
-</html>

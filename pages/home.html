@@ -1,62 +1,48 @@
 <style>
-
 	#mem_pool_rows tr td:first-child {
 		text-align: left;
 	}
 </style>
 
 <div class="row">
-	<div class="col-sm-12 col-md-6">
+	<div class="col-sm-12 col-md-4">
 		<div class="panel panel-default" id="network-stats">
 		  <div class="panel-heading">
-			<h3 class="panel-title"><i class="fa fa-tasks fa-fw" aria-hidden="true"></i> Stats</h3>
+			<h3 class="panel-title"><i class="fa fa-tasks fa-fw" aria-hidden="true"></i> Current block / Network stats</h3>
 		  </div>
 		  <div class="panel-body">
-			<div class="row">
-				<div class="col-sm-6 col-md-6">
-					<ul class="list-group" style="margin-bottom: 0px;">
-					
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Blockchain height, total amount of blocks starting from zero."><i class="fa fa-list-ol"></i> Height: <span id="networkHeight"></span></li>
-				
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="The number of transactions in the network (excluding coinbase, i.e. reward for mined blocks)."><i class="fa fa fa-exchange"></i> Transactions: <span id="networkTransactions"></span></li>
-						
 			
-						
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Current Base Reward (for last mined block)."><i class="fa fa-certificate"></i> Reward: <span id="currentReward"></span>kQWC</li>
-						
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Total Qwertycoin supply in circulation."><i class="fa fa-money"></i> Supply: <span id="totalCoins"></span>mQWC</li>
-						
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Percent of already emitted coins related to Initial supply before Tail emission."><i class="fa fa-university" aria-hidden="true"></i> Emission: <span id="emissionPercent"></span> %</li>
-						
-						<li class="list-group-item d-flex justify-content-between align-items-center disabled" data-toggle="tooltip" data-placement="top" data-original-title="Minimum transaction fee."><i class="fa fa-percent" aria-hidden="true"></i> Min. fee: <span id="minimumFee"></span></li>
-						
-					</ul>
-				</div>
-				<div class="col-sm-6 col-md-6">
-					<ul class="list-group" style="margin-bottom: 0px;">
-					
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Difficulty for next block. Ratio at which at the current hashing speed blocks will be mined with 4 minutes interval."><i class="fa fa-unlock-alt"></i> Next Difficulty: <span id="networkDifficulty"></span></li>
+			<ul class="list-group">
+			
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Blockchain height, total amount of blocks starting from zero."><i class="fa fa-list-ol"></i> Height: <span id="networkHeight"></span></li>
+		
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="The number of transactions in the network (excluding coinbase, i.e. reward for mined blocks)."><i class="fa fa fa-exchange"></i> Transactions: <span id="networkTransactions"></span></li>	
 				
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Average difficulty by last 30 blocks."><i class="fa fa-lock"></i> Average Difficulty: <span id="avgDifficulty"></span></li>
-					
-					
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Current estimated network hash rate. Calculated by current difficulty."><i class="fa fa-tachometer"></i> Hash Rate: <span id="networkHashrate"></span></li>
-						
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Average estimated network hash rate. Calculated by average difficulty."><i class="fa fa-tachometer"></i> Avg. Hash Rate: <span id="avgHashrate"></span></li>
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Current Base Reward (for last mined block)."><i class="fa fa-certificate"></i> Reward: <span id="currentReward"></span></li>
+				
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Total Qwertycoin supply in circulation."><i class="fa fa-money"></i> Supply: <span id="totalCoins"></span></li>
+				
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="bottom" data-original-title="Percent of already emitted coins related to Initial supply before Tail emission."><i class="fa fa-university" aria-hidden="true"></i> Emission: <span id="emissionPercent"></span> %</li>
 
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Estimated block solve time at estimated network speed and current difficulty."><i class="fa fa-clock-o" aria-hidden="true"></i> Est. solve time: <span id="blockSolveTime"></span></li>
-						
-						<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Average solve time for the recent blocks listed below."><i class="fa fa-clock-o" aria-hidden="true"></i> Avg. solve time: <span id="avgSolveTime"></span></li>
-					
-					</ul>
-				</div>
-			</div>
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Difficulty for next block. Ratio at which at the current hashing speed blocks will be mined with 2 minutes interval."><i class="fa fa-unlock-alt"></i> Next Difficulty: <span id="networkDifficulty"></span></li>
+		
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Average difficulty by last 30 blocks."><i class="fa fa-lock"></i> Average Difficulty: <span id="avgDifficulty"></span></li>			
+			
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Current estimated network hash rate. Calculated by current difficulty."><i class="fa fa-tachometer"></i> Hash Rate: <span id="networkHashrate"></span></li>
+				
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Average estimated network hash rate. Calculated by average difficulty."><i class="fa fa-clock-o"></i> Average Hash Rate: <span id="avgHashrate"></span></li>
+
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="bottom" data-original-title="Estimated block solve time at estimated network speed and current difficulty."><i class="fa fa-circle-o-notch" aria-hidden="true"></i> Est. Solve time: <span id="blockSolveTime"></span></li>
+
+				<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="tooltip" data-placement="top" data-original-title="Average solve time for the recent blocks listed below."><i class="fa fa-clock-o" aria-hidden="true"></i> Avg. solve time: <span id="avgSolveTime"></span></li>
+				
+			</ul>				
 			
 		  </div>
 		</div>
 	</div>
 
-	<div class="col-sm-6 col-md-6">
+	<div class="col-sm-12 col-md-8">
 		<div class="panel panel-default">
 		  <div class="panel-heading">
 		  
@@ -66,8 +52,8 @@
 			</h3>
 			
 		  </div>
-		  <div class="panel-body chart-wrapper">
-			<canvas id="difficultyChart" height="250"></canvas>
+		  <div class="panel-body chart-wrapper" id="hpChart">
+			<!--<canvas id="difficultyChart" height="210"></canvas>-->
 		  </div>
 		</div>
 	</div>
@@ -146,6 +132,9 @@
 				<tbody id="mem_pool_rows">
 					
 				</tbody>
+				<tr>
+					<td colspan="5"><strong>Please use the above search form to find your transaction.</strong></td>
+				</tr>
 			</table>
 		</div>
 	</div>
@@ -197,14 +186,14 @@
 var block,
 	Difficulties = [],
 	Blocks = [],
+	Hashrates = [],
 	Rewards = [],
 	Txses = [],
 	Sizes = [],
 	Timestamps = [],
 	time_stamps = [],
-	Solvetimes = [],
-	diffChart,
-	refresh = true;
+	diffChart;
+
 
 currentPage = {
         destroy: function(){
@@ -215,31 +204,28 @@ currentPage = {
 				renderInitialBlocks()
 			).then(function() {
 				setTimeout(function(){
-					$.when(
-						displayDiffChart()
-					).then(function() {
-						setTimeout(function(){
-							refreshChart();
-						}, 100)
-					});
+					//displayDiffChart();
+					showHpChart();
+					//refreshChart();
 				}, 500)
 			});
         },
         update: function(){
 			renderLastBlock();
-            updateText('networkHeight', lastStats.height.toString());
-            updateText('networkTransactions', lastStats.tx_count.toString());
+            updateText('networkHeight', addCommas(lastStats.height.toString()));
+            updateText('networkTransactions', addCommas(lastStats.tx_count.toString()));
             updateText('networkHashrate', getReadableHashRateString(lastStats.difficulty / blockTargetInterval));
             updateText('networkDifficulty', getReadableDifficultyString(lastStats.difficulty, 2).toString());
 			$("time.timeago").timeago();
 			getPoolTransactions();
 			var currHeight = $('#blocks_rows').children().first().data('height');
-			if(refresh){
+			if((currHeight + 31) > lastStats.last_known_block_index){
 				$.when(
 					renderInitialBlocks()
 				).then(function() {
 					setTimeout(function(){
-						refreshChart();
+						//refreshChart();
+						//showHpChart();
 					}, 100)
 				});
 			}
@@ -280,13 +266,13 @@ $.ajax({
 			cache: 'false',
 			success: function(data){
 			block = data.result.block;
-  				updateText('totalCoins', getReadableCoins(block.alreadyGeneratedCoins/1000000,5,true));
-  				updateText('emissionPercent', (block.alreadyGeneratedCoins / 18446744073700000000 * 100).toFixed(4));
-				updateText('currentReward', getReadableCoins(block.baseReward/1000,4,true));
+				updateText('totalCoins', addCommas(getReadableCoins(block.alreadyGeneratedCoins,1)));
+				updateText('emissionPercent', (block.alreadyGeneratedCoins / 18446744073700000000 * 100).toFixed(4));
+				updateText('currentReward', addCommas(getReadableCoins(block.baseReward,8)));
 			}
 		});
     }
-});
+});				
 }
 
 var xhrGetBlocks;
@@ -318,7 +304,6 @@ $('#loadMoreBlocks').click(function(){
 });
 
 $('#prev-page').click(function(e){
-	refresh = false;
     if (xhrGetBlocks) xhrGetBlocks.abort();
 	var currHeight = $('#blocks_rows').children().first().data('height');
 	var openHeight = (currHeight - 31 < 0) ? 0 : currHeight - 31;
@@ -342,7 +327,8 @@ $('#prev-page').click(function(e){
 					renderBlocks(data.result.blocks)
 				).then(function() {
 					setTimeout(function(){
-						refreshChart();
+						//refreshChart();
+						//showHpChart();
 					}, 100)
 				});
             }
@@ -358,7 +344,6 @@ $('#prev-page').click(function(e){
 });
 
 $('#next-page').click(function(e){
-	refresh = false;
     if (xhrGetBlocks) xhrGetBlocks.abort();
 	var currHeight = $('#blocks_rows').children().first().data('height');
 	var openHeight = (currHeight + 31 > lastStats.last_known_block_index) ? (lastStats.last_known_block_index) : currHeight + 31;
@@ -382,7 +367,8 @@ $('#next-page').click(function(e){
 					renderBlocks(data.result.blocks)
 				).then(function() {
 					setTimeout(function(){
-						refreshChart();
+						//refreshChart();
+						//showHpChart();
 					}, 100)
 				});			
             }
@@ -391,7 +377,6 @@ $('#next-page').click(function(e){
 	
 	if((currHeight + 61) > lastStats.last_known_block_index){
 		$('#next-page').addClass('disabled');
-		refresh = true;
 	}
 	
 		$('#prev-page').removeClass('disabled');
@@ -457,16 +442,17 @@ $('#goto-height').keyup(function(e){
             '<td class="date-time">' + formatDate(block.timestamp) + ' (<time class="timeago" datetime="'+dateTime+'"></time>)</td>' +
 			'<td>' + formatBytes(parseInt(block.cumul_size)) + '</td>' +
 			'<td>' + formatBlockLink(block.hash) + '</td>' +
-            '<td class="blk-diff">' + block.difficulty + '</td>' +
+            '<td class="blk-diff text-right">' + block.difficulty.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + '</td>' +
             '<td>' + block.tx_count + '</td>';
 
 		Difficulties.push(parseInt(block.difficulty));
-		Blocks.push(parseInt(block.height));
+		Blocks.push(parseInt(block.height));		
+		Hashrates.push(parseFloat(parseFloat(parseInt(block.difficulty)/120/1000000).toFixed(2)));
 		Txses.push(parseInt(block.tx_count));
 		Sizes.push(parseInt(block.cumul_size));
 		Timestamps.push(dateTime);
 		time_stamps.push(block.timestamp);
-
+				
         row.innerHTML = columns;
 		
         return row;
@@ -524,7 +510,7 @@ $('#goto-height').keyup(function(e){
         updateText('blockSolveTime', getReadableTime(lastStats.difficulty / avgHashRate));
 
 	}
-	
+
 	function calcAvgSolveTime(){ 
 		ts = time_stamps.concat([]);
 		ts.sort();
@@ -537,7 +523,6 @@ $('#goto-height').keyup(function(e){
 		updateText('avgSolveTime', getReadableTime(avg_solve_time));
 	}
 	
-//  Karbovanets MemPool Transactions
 function getPoolTransactions(){
   var xhrGetPool = $.ajax({
 	url: api + '/json_rpc',
@@ -551,45 +536,158 @@ function getPoolTransactions(){
 	dataType: 'json',
 	cache: 'false',
 	success: function(newdata) {
-		if(typeof newdata.result !== "undefined") {
-			var data = newdata.result.mempool;
-			var totalAmount = 0;
-			var totalFee = 0;
-			var totalSize = 0;
-			var txcount = 0;
-			var txsRows = document.getElementById('mem_pool_rows');
-			  if (txsRows) {
-				while (txsRows.firstChild) {
-				  txsRows.removeChild(txsRows.firstChild);
-				}
-			  }
-			for (var i = 0; i < data.length; i ++){
-				var tx = data[i];
-					
-				var row = document.createElement('tr');
-				var columns =
-					'<td>' + formatDate(tx.receiveTime) + ' (<span class="mtx-ago"></span>)' + '</td>' +
-					'<td>' + getReadableCoins(tx.amount_out, 4, true) + '</td>' +
-					'<td>' + getReadableCoins(tx.fee, 4, true) + '</td>' +
-					'<td>' + formatBytes(parseInt(tx.size)) + '</td>' +
-					'<td>' + formatPaymentLink(tx.hash) + '</td>';
-				row.innerHTML = columns;
-				$(txsRows).append(row);
-				$(row).find('.mtx-ago').timeago('update', new Date(tx.receiveTime * 1000).toISOString());
-				
-				txcount = txcount + 1;
-				totalAmount = tx.amount_out + totalAmount;
-				totalFee = totalFee + tx.fee;
-				totalSize = totalSize + tx.size;
-				
+		var data = newdata.result.mempool;
+		var totalAmount = 0;
+		var totalFee = 0;
+		var totalSize = 0;
+		var txcount = 0;
+		var txsRows = document.getElementById('mem_pool_rows');
+		if (txsRows) {
+			while (txsRows.firstChild) {
+				txsRows.removeChild(txsRows.firstChild);
 			}
-			updateText('mempool_count', txcount);
-			updateText('mempool_amount', getReadableCoins(totalAmount,4));
-			updateText('mempool_fees', getReadableCoins(totalFee, 8));
-			updateText('mempool_sizes', formatBytes(parseInt(totalSize)));
 		}
+	  	if(data.length <= 10) {
+			showTransa = data.length;
+		} else {
+			showTransa = 10;
+		}
+		for (var i = 0; i < showTransa; i ++){
+			var tx = data[i];
+				
+			var row = document.createElement('tr');
+			var columns =
+				'<td>' + formatDate(tx.receiveTime) + ' (<span class="mtx-ago"></span>)' + '</td>' +
+				'<td>' + addCommas(getReadableCoins(tx.amount_out, 4, true)) + '</td>' +
+				'<td>' + addCommas(getReadableCoins(tx.fee, 1, true)) + '</td>' +
+				'<td>' + formatBytes(parseInt(tx.size)) + '</td>' +
+				'<td>' + formatPaymentLink(tx.hash) + '</td>';
+			row.innerHTML = columns;
+			$(txsRows).append(row);
+			$(row).find('.mtx-ago').timeago('update', new Date(tx.receiveTime * 1000).toISOString());
+		}
+		for (var i = 0; i < data.length; i ++){
+			txcount = txcount + 1;
+			totalAmount = tx.amount_out + totalAmount;
+			totalFee = totalFee + tx.fee;
+			totalSize = totalSize + tx.size;
+		}
+		updateText('mempool_count', addCommas(txcount));
+		updateText('mempool_amount', addCommas(getReadableCoins(totalAmount,1)));
+		updateText('mempool_fees', addCommas(getReadableCoins(totalFee, 1)));
+		updateText('mempool_sizes', formatBytes(parseInt(totalSize)));
 	}
   });
+}
+
+function showHpChart() {	
+
+	Highcharts.chart('hpChart', {
+
+		chart: {
+	        type: 'spline'
+	    },
+
+	    title: {
+	        text: ''
+	    },
+
+	    colors: ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"],
+
+	    xAxis: [{
+        	categories: [].concat(Timestamps).reverse(),
+	        crosshair: true,
+	        type: 'datetime',
+	        labels: {
+	        	enabled: true,
+	        	step: 2,
+	        	formatter: function() {
+	        		return moment(this.value).format("HH:mm");
+	        		}	        	
+	        	}
+		    }],
+
+		yAxis: [{ labels: { enabled: false}, title: { text: null }},
+				{ labels: { enabled: false}, title: { text: null }},
+				{ labels: { enabled: false}, title: { text: null }, opposite: true },
+				{ labels: { enabled: false}, title: { text: null }},
+				{ labels: { enabled: false}, title: { text: null }}
+	        	],	    
+	    
+	    tooltip: {
+			shared: true,
+			formatter: function() {
+		        var s = '<b>'+ this.x +'</b>';
+
+		        $.each(this.points, function(i, point) {
+		            s += '<br/><span style="color:' + point.color + '">\u25CF</span>: ' + point.series.name + ': ' + point.y;
+		            if(i==4) s+= ' MH';
+		        });
+
+		        return s;
+		    },
+        },
+
+	    plotOptions: {
+	        series: {
+	            label: {
+	                connectorAllowed: false
+	            },
+	            /*pointStart: 2010,*/
+	            marker: {
+                	enabled: false,
+                	size: 2
+            	}
+	        }
+	    },
+
+	    series: [{
+	        	name: 'Height',
+	        	data: [].concat(Blocks).reverse(),
+	        	yAxis: 0,
+	        	color: '#b6b6b6',
+	        	dashStyle: 'ShortDash'
+		    	}, {
+		        name: 'Difficulty',
+		        data: [].concat(Difficulties).reverse(),
+		        yAxis: 1,
+		        color: '#7cb5ec',
+		        type: 'areaspline',
+		        fillOpacity: 0.3
+		    	}, {
+		        name: 'Transactions',
+		        data: [].concat(Txses).reverse(),
+		        yAxis: 2,
+		        color: '#90ed7d'
+		    	}, {
+		        name: 'Sizes',
+		        data: [].concat(Sizes).reverse(),
+		        yAxis: 3,
+		        color: '#f7a35c'
+		    	}, {
+	        	name: 'Hashrate (MH/s)',
+	        	data: [].concat(Hashrates).reverse(),
+	        	yAxis: 4,
+	        	color: '#666666'
+		    	}],
+
+	    responsive: {
+	        rules: [{
+	            condition: {
+	                maxWidth: 500
+	            },
+	            chartOptions: {
+	                legend: {
+	                    layout: 'horizontal',
+	                    align: 'center',
+	                    verticalAlign: 'bottom'
+	                }
+	            }
+	        }]
+	    }
+
+	});
+	$('.highcharts-credits').hide();
 }
 
 // Difficulty chart
@@ -781,7 +879,7 @@ function displayDiffChart() {
 					title: function(tooltipItem, data) {
 						var height	= data.datasets[3].data[tooltipItem[0].index];
 						var time = new Date(data.labels[tooltipItem[0].index]).toLocaleString();
-						//return 'Block: ' + height + ' - ' + time + '';
+						//return 'Ð‘Ð»Ð¾Ðº â„–: ' + height + ' - ' + time + '';
 						return time + '';
 					},/*
 					label: function(tooltipItem, data) { 
@@ -797,9 +895,9 @@ function displayDiffChart() {
 						
 						var multistringText = [];
   
-						var str1 = diff_swatch + 'Difficulty: ' + diff + '';
-						var str2 = 'Size: ' + size + '';
-						var str3 = 'Transactions: ' + txcount + '';
+						var str1 = diff_swatch + 'Ð¡ÐºÐ»Ð°Ð´Ð½Ñ–ÑÑ‚ÑŒ: ' + diff + '';
+						var str2 = 'Ð Ð¾Ð·Ð¼Ñ–Ñ€: ' + size + '';
+						var str3 = 'Ð¢Ñ€Ð°Ð½Ð·Ð°ÐºÑ†Ñ–Ñ—: ' + txcount + '';
   
 						multistringText.push(str1);
 						multistringText.push(str2);
@@ -828,12 +926,12 @@ function refreshChart() {
 		txsnr   = [];
 		for (var i = 0; i < brows.length; i++) {
 			var row = $(brows[i]);
-			var label = row.data("json").height;
-			var diff  = row.data("json").difficulty;
-			var txses = row.data("json").tx_count;
-			var size  = row.data("json").cumul_size;
-			var time  = row.attr('data-dt');
-
+			var label  = parseInt(row.find('td:first').text());
+			var diff   = parseInt(row.find('td.blk-diff').text());			
+			var txses  = parseInt(row.find('td:last').text());
+			var size   = parseInt(row.find('td:nth-child(3)').text());
+			var time   = row.attr('data-dt');
+			
 				labels.push(label);
 				diffs.push(diff);
 				txsnr.push(txses);
@@ -862,12 +960,13 @@ function loadMoreChart() {
 
 $(function() {
     $('[data-toggle="tooltip"]').tooltip();
+    //console.log(Hashrates);
 });
 
 function getReadableTime(seconds){
 
         var units = [ [60, 's.'], [60, 'min.'], [24, 'h.'],
-            [7, 'd.'], [4, 'w.'], [12, 'м.'], [1, 'y.'] ];
+            [7, 'd.'], [4, 'w.'], [12, 'Ð¼.'], [1, 'y.'] ];
 
         function formatAmounts(amount, unit){
             var rounded = Math.round(amount);
@@ -884,4 +983,4 @@ function getReadableTime(seconds){
 }
 
 </script>
-<script src="../js/Chart.bundle.min.js"></script>
+<!--<script src="../js/Chart.bundle.min.js"></script>-->
