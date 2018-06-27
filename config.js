@@ -1,6 +1,6 @@
 var api = 'http://127.0.0.1:8197';
 var blockTargetInterval = 120;
-var coinUnits = 10000000;
+var coinUnits = 100000000;
 var symbol = 'QWC';
 var refreshDelay = 30000;
 // pools stats by QWCcoin
